@@ -1,15 +1,17 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import { signIn } from "@/app/actions/signIn";
-import { signout } from "@/app/actions/signout";
+import { signIn } from "@/actions/signIn";
+import { signout } from "@/actions/signout";
 import { Avatar, AvatarImage, AvatarFallback } from "@radix-ui/react-avatar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Button } from "./ui/button";
 
 const AuthHeader = () => {
   const { data: session } = useSession();
-  if(!session?.user) return <h1><span className="text-white">Loading...</span></h1>;
+  if(!session?.user === undefined) {
+return <h1><span className="text-white">Loading...</span></h1>;
+  } 
 
   if (session?.user) {
     return (
