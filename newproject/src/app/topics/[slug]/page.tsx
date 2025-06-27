@@ -20,6 +20,7 @@ const Page = async ({ params }: PageProps) => {
       </div>
   
       <PostList posts={posts} />
+      
     </div>
   );
 };

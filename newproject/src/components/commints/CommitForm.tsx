@@ -9,31 +9,45 @@ const initialState = {
   success: false,
 };
 
-const CommitForm = () => {
-  const [open, setOpen] = useState(true);
-  const [formState, action] = useActionState(CreateCommit, initialState);
+interface CommitFormProps {
+  postId: string;
+  parentId?: string;
+  startOpen?: boolean;
+}
+
+const CommitForm: React.FC<CommitFormProps> = ({ postId, parentId, startOpen }) => {
+  const [open, setOpen] = useState(startOpen || false);
+  const [formState, action] = useActionState(
+    (prevState: typeof initialState, formData: FormData) =>
+      CreateCommit({ postId, parentId }, prevState, formData),
+    initialState
+  );
 
   return (
-    <div className="p-4 border rounded-md bg-white shadow-md max-w-xl mx-auto">
-      <Button onClick={() => setOpen(!open)} className="mb-4">
-        {open ? "Close" : "Reply"}
-      </Button>
+    <div className="bg-gray-100 rounded-lg p-4 shadow-sm">
+      {!startOpen && (
+        <Button
+          onClick={() => setOpen(!open)}
+          className="bg-gray-700 text-white hover:bg-gray-600"
+          size="sm"
+        >
+          {open ? "Cancel" : "Reply"}
+        </Button>
+      )}
 
       {open && (
-        <form action={action}>
-          <div className="mb-4">
-            <textarea
-              name="content"
-              className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              rows={4}
-              placeholder="Write your reply here..."
-            />
-            {formState?.error?.content && (
-              <p className="text-red-500 text-sm mt-1">
-                {formState.error.content[0]}
-              </p>
-            )}
-          </div>
+        <form action={action} className="mt-2">
+          <textarea
+            name="content"
+            className="w-full p-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+            rows={3}
+            placeholder="Write your reply..."
+          />
+          {formState?.error?.content && (
+            <p className="text-red-500 text-xs mt-1">
+              {formState.error.content[0]}
+            </p>
+          )}
 
           {formState?.error?.formerror && (
             <p className="text-red-600 text-sm mb-2">
@@ -41,17 +55,18 @@ const CommitForm = () => {
             </p>
           )}
 
-          <div>
+          <div className="mt-2">
             <Button
               type="submit"
-              className="bg-blue-500 text-white hover:bg-blue-600"
+              className="bg-blue-600 hover:bg-blue-700 text-white"
+              size="sm"
             >
-              Submit Reply
+              Submit
             </Button>
           </div>
 
           {formState?.success && (
-            <p className="text-green-600 text-sm mt-2">
+            <p className="text-green-600 text-xs mt-2">
               Reply submitted successfully!
             </p>
           )}
